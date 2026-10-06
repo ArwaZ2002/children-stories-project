@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StoryWeaver — Children's Story Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="site-header">
+            <div class="header-inner">
+                <div class="brand">
+                    <svg class="brand-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    <span class="brand-name">StoryWeaver</span>
+                </div>
+                <nav class="header-nav">
+                    <button class="nav-btn" id="navCreate">Create</button>
+                    <button class="nav-btn" id="navGallery">Library</button>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="form-section" id="formSection">
+                <div class="section-header">
+                    <h2>Create a Story</h2>
+                    <p class="section-subtitle">Choose a character, pick a moral lesson, and we'll craft a unique tale.</p>
+                </div>
+
+                <form class="story-form" id="storyForm">
+                    <div class="form-group">
+                        <label class="form-label">Age Group</label>
+                        <div class="age-options">
+                            <button type="button" class="age-btn" data-value="4">
+                                <span class="age-label">4–5 years</span>
+                            </button>
+                            <button type="button" class="age-btn selected" data-value="5-6">
+                                <span class="age-label">5–6 years</span>
+                            </button>
+                            <button type="button" class="age-btn" data-value="7-8">
+                                <span class="age-label">7–8 years</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Moral Lesson</label>
+                        <div class="moral-input-wrapper">
+                            <select class="moral-select" id="moralSelect">
+                                <option value="">Select a lesson</option>
+                                <option value="sharing is caring">Sharing is caring</option>
+                                <option value="honesty">Honesty</option>
+                                <option value="kindness">Kindness</option>
+                                <option value="courage">Courage</option>
+                                <option value="respect">Respect</option>
+                            </select>
+                            <button type="button" class="custom-moral-btn" id="addCustomBtn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                Custom
+                            </button>
+                        </div>
+                        <div class="custom-moral-popup" id="presetPopup">
+                            <textarea placeholder="Enter your own moral lesson..." id="customMoral"></textarea>
+                            <div class="popup-actions">
+                                <button type="button" class="popup-cancel" id="cancelCustom">Cancel</button>
+                                <button type="button" class="popup-confirm" id="useCustom">Use This</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Main Character</label>
+                        <select class="moral-select" id="characterSelect">
+                            <option value="animal">Animal</option>
+                            <option value="princess">Princess</option>
+                            <option value="prince">Prince</option>
+                            <option value="superhero">Superhero</option>
+                            <option value="dragon">Dragon</option>
+                            <option value="robot">Robot</option>
+                            <option value="fairy">Fairy</option>
+                            <option value="knight">Knight</option>
+                            <option value="mermaid">Mermaid</option>
+                            <option value="pirate">Pirate</option>
+                            <option value="wizard">Wizard</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="generate-btn" id="generateBtn">
+                        <span>Generate Story</span>
+                    </button>
+                </form>
+
+                <div class="form-error" id="formError" style="display: none;"></div>
+            </section>
+
+            <section class="story-section" id="storyDisplay" style="display: none;">
+                <div class="story-header">
+                    <div class="story-header-info">
+                        <h2 id="storyTitle">Story Title</h2>
+                        <div class="story-meta">
+                            <span id="ageInfo">Age: 5–6 years</span>
+                            <span class="meta-divider"></span>
+                            <span id="characterInfo">Character: Animal</span>
+                            <span class="meta-divider"></span>
+                            <span id="moralInfo">Moral: sharing is caring</span>
+                        </div>
+                    </div>
+                    <div class="story-actions">
+                        <button class="action-btn" id="newStoryBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                            New Story
+                        </button>
+                        <button class="action-btn fav-btn" id="favBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="story-body">
+                    <div class="story-text" id="storyText">
+                        <p>Your story will appear here.</p>
+                    </div>
+                    <div class="story-illustrations" id="storyGallery"></div>
+                </div>
+
+                <div class="story-footer">
+                    <button class="pdf-btn" id="pdfBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Save as PDF
+                    </button>
+                </div>
+            </section>
+
+            <section class="gallery-section" id="gallerySection" style="display: none;">
+                <div class="section-header">
+                    <h2>Your Library</h2>
+                    <p class="section-subtitle">Stories you've saved will appear here.</p>
+                </div>
+                <div class="gallery-grid" id="galleryGrid"></div>
+            </section>
+        </main>
+
+        <div class="gallery-overlay" id="galleryOverlay">
+            <div class="gallery-panel">
+                <div class="gallery-panel-header">
+                    <h2>Your Library</h2>
+                    <button class="close-btn" id="closeGallery">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="gallery-grid" id="galleryPanelGrid"></div>
+            </div>
+        </div>
+
+        <div class="error-overlay" id="errorOverlay">
+            <div class="error-card">
+                <h2>Something went wrong</h2>
+                <p id="errorMessage">An error occurred</p>
+                <button class="retry-btn" id="retryBtn">Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let story = null;
+        let favorites = [];
+        let selectedAge = '5-6';
+
+
+        const form = document.getElementById('storyForm');
+        const moralSelect = document.getElementById('moralSelect');
+        const addCustomBtn = document.getElementById('addCustomBtn');
+        const presetPopup = document.getElementById('presetPopup');
+        const customMoral = document.getElementById('customMoral');
+        const cancelCustom = document.getElementById('cancelCustom');
+        const useCustom = document.getElementById('useCustom');
+        const generateBtn = document.getElementById('generateBtn');
+        const formError = document.getElementById('formError');
+        const storyDisplay = document.getElementById('storyDisplay');
+        const storyTitle = document.getElementById('storyTitle');
+        const ageInfo = document.getElementById('ageInfo');
+        const characterInfo = document.getElementById('characterInfo');
+        const moralInfo = document.getElementById('moralInfo');
+        const storyText = document.getElementById('storyText');
+        const storyGallery = document.getElementById('storyGallery');
+        const pdfBtn = document.getElementById('pdfBtn');
+        const newStoryBtn = document.getElementById('newStoryBtn');
+        const favBtn = document.getElementById('favBtn');
+        const gallerySection = document.getElementById('gallerySection');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const galleryOverlay = document.getElementById('galleryOverlay');
+        const galleryPanelGrid = document.getElementById('galleryPanelGrid');
+        const closeGallery = document.getElementById('closeGallery');
+        const errorOverlay = document.getElementById('errorOverlay');
+        const errorMessage = document.getElementById('errorMessage');
+        const retryBtn = document.getElementById('retryBtn');
+        const characterSelect = document.getElementById('characterSelect');
+        const ageBtns = document.querySelectorAll('.age-btn');
+        const navCreate = document.getElementById('navCreate');
+        const navGallery = document.getElementById('navGallery');
+
+        ageBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                ageBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedAge = btn.dataset.value;
+            });
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const moral = moralSelect.value;
+            if (!moral.trim()) {
+                showError('Please select or enter a moral lesson');
+                return;
+            }
+
+            const character = characterSelect.value;
+
+            setLoading(true);
+            hideError();
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        age: selectedAge,
+                        moralLesson: moral,
+                        character: character,
+                    }),
+                });
+
+                if (!response.ok) throw new Error('Failed to generate story');
+
+                const data = await response.json();
+                story = data.story;
+                favorites.push(story);
+                saveFavorites();
+                displayStory();
+                hideError();
+            } catch (err) {
+                console.error('Generation error:', err);
+                showError('Failed to generate story. Please try again.');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        addCustomBtn.addEventListener('click', () => {
+            presetPopup.style.display = 'block';
+            customMoral.value = moralSelect.value;
+        });
+
+        cancelCustom.addEventListener('click', () => {
+            presetPopup.style.display = 'none';
+        });
+
+        useCustom.addEventListener('click', () => {
+            const value = customMoral.value.trim();
+            if (value) {
+                moralSelect.value = value;
+                presetPopup.style.display = 'none';
+            } else {
+                showError('Please enter a moral lesson');
+            }
+        });
+
+        function displayStory() {
+            if (!story) return;
+
+            storyDisplay.style.display = 'block';
+            storyTitle.textContent = story.title || 'Untitled Story';
+
+            const ageLabels = { '4': '4–5 years', '5-6': '5–6 years', '7-8': '7–8 years' };
+            ageInfo.textContent = `Age: ${ageLabels[story.age] || story.age || 'N/A'}`;
+            characterInfo.textContent = `Character: ${story.character ? story.character.charAt(0).toUpperCase() + story.character.slice(1) : 'N/A'}`;
+            moralInfo.textContent = `Moral: ${story.moralLesson || 'N/A'}`;
+
+            const paragraphs = (story.storyText || '').split('\n\n').filter(p => p.trim());
+            storyText.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+
+            storyGallery.innerHTML = '';
+            const images = Array.isArray(story.imageUrls) ? story.imageUrls : [];
+            images.forEach((imgUrl, index) => {
+                const img = document.createElement('img');
+                img.src = imgUrl || '';
+                img.alt = `Story illustration ${index + 1}`;
+                img.className = 'story-img';
+                storyGallery.appendChild(img);
+            });
+
+            updateFavBtn();
+            gallerySection.style.display = 'none';
+
+            storyDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function newStory() {
+            story = null;
+            storyDisplay.style.display = 'none';
+            form.reset();
+            presetPopup.style.display = 'none';
+            hideError();
+            gallerySection.style.display = 'none';
+            galleryOverlay.classList.remove('active');
+            selectedAge = '5-6';
+            ageBtns.forEach(b => b.classList.remove('selected'));
+            ageBtns[1].classList.add('selected');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        newStoryBtn.addEventListener('click', newStory);
+
+        function updateFavBtn() {
+            if (story && story.favorite) {
+                favBtn.classList.add('favorited');
+                favBtn.querySelector('span').textContent = 'Saved';
+            } else {
+                favBtn.classList.remove('favorited');
+                favBtn.querySelector('span').textContent = 'Save';
+            }
+        }
+
+        favBtn.addEventListener('click', async () => {
+            if (!story) return;
+
+            try {
+                const response = await fetch(`/api/favorites/${story.id}`, { method: 'POST' });
+                const data = await response.json();
+                story = data.story;
+                updateFavBtn();
+
+                const index = favorites.findIndex(f => f.id === story.id);
+                if (index !== -1) favorites[index] = story;
+                saveFavorites();
+            } catch (err) {
+                console.error('Error toggling favorite:', err);
+            }
+        });
+
+        function renderGallery() {
+            const stored = JSON.parse(localStorage.getItem('storyFavorites') || '[]');
+            favorites = stored.length > 0 ? stored : favorites;
+
+            if (favorites.length === 0) {
+                const emptyHTML = `
+                    <div class="empty-state">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        <p>No stories yet</p>
+                        <span>Create your first story to see it here.</span>
+                    </div>
+                `;
+                galleryGrid.innerHTML = emptyHTML;
+                galleryPanelGrid.innerHTML = emptyHTML;
+                return;
+            }
+
+            const cardsHTML = favorites.map((fStory) => `
+                <div class="gallery-card" data-id="${fStory.id}">
+                    <div class="gallery-card-img">
+                        <img src="${fStory.imageUrls?.[0] || ''}" alt="${fStory.title}">
+                    </div>
+                    <div class="gallery-card-info">
+                        <h3>${fStory.title}</h3>
+                        <span class="gallery-card-moral">${fStory.moralLesson}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            galleryGrid.innerHTML = cardsHTML;
+            galleryPanelGrid.innerHTML = cardsHTML;
+
+            document.querySelectorAll('.gallery-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = card.dataset.id;
+                    const found = favorites.find(f => f.id === id);
+                    if (found) {
+                        story = found;
+                        displayStory();
+                        galleryOverlay.classList.remove('active');
+                    }
+                });
+            });
+        }
+
+        function saveFavorites() {
+            localStorage.setItem('storyFavorites', JSON.stringify(favorites));
+        }
+
+        navCreate.addEventListener('click', () => {
+            newStory();
+        });
+
+        navGallery.addEventListener('click', () => {
+            renderGallery();
+            galleryOverlay.classList.add('active');
+        });
+
+        closeGallery.addEventListener('click', () => {
+            galleryOverlay.classList.remove('active');
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorOverlay.classList.add('active');
+        }
+
+        function hideError() {
+            errorOverlay.classList.remove('active');
+            formError.style.display = 'none';
+        }
+
+        retryBtn.addEventListener('click', () => {
+            errorOverlay.classList.remove('active');
+            if (story) form.dispatchEvent(new Event('submit'));
+        });
+
+        function setLoading(loading) {
+            if (loading) {
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = '<span class="spinner"></span><span>Generating...</span>';
+                storyDisplay.style.display = 'none';
+            } else {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<span>Generate Story</span>';
+            }
+        }
+
+        pdfBtn.addEventListener('click', () => {
+            if (!story) return;
+
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${story.title}</title>
+                    <link rel="stylesheet" href="/app.css">
+                    <style>
+                        body { font-family: 'DM Serif Display', Georgia, serif; max-width: 700px; margin: 0 auto; padding: 40px; }
+                        h1 { font-size: 2rem; margin-bottom: 10px; }
+                        .meta { color: #666; font-size: 0.9rem; margin-bottom: 30px; }
+                        p { line-height: 1.8; margin-bottom: 1em; text-indent: 30px; }
+                        .images { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 30px; }
+                        .images img { max-width: 200px; border-radius: 8px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>${story.title}</h1>
+                    <p class="meta">Age: ${story.age} | Character: ${story.character} | Moral: ${story.moralLesson}</p>
+                    ${story.storyText.split('\n\n').map(p => `<p>${p}</p>`).join('')}
+                    <div class="images">
+                        ${story.imageUrls.map(url => `<img src="${url}" alt="Story illustration">`).join('')}
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.onload = () => printWindow.print();
+        });
+
+        renderGallery();
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') galleryOverlay.classList.remove('active');
+        });
+
+        galleryOverlay.addEventListener('click', (e) => {
+            if (e.target === galleryOverlay) galleryOverlay.classList.remove('active');
+        });
+    </script>
+</body>
+</html>
